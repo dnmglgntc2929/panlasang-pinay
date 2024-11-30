@@ -11,11 +11,11 @@ import { AuthProvider } from "../services/Authentication";
 import Dashboard from "../model/productPages/Dashboard";
 import Settings from "../model/productPages/Settings";
 import Talk from "../model/productPages/Talk";
-
+import Favorite from "../model/productPages/Favorites";
 export default function Navigation() {
   return (
     <>
-      <AuthProvider>
+      {/* <AuthProvider> */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -23,9 +23,9 @@ export default function Navigation() {
             <Route
               path="/dashboard"
               element={
-                <ReqAut>
+                
                   <Dashboard />
-                </ReqAut>
+                
               }
             />
 
@@ -47,12 +47,21 @@ export default function Navigation() {
                 </ReqAut>
               }
             />
+            <Route
+            path="/favorites"
+            element={
+              
+                <Favorite />
+              
+            }
+            />
+
             <Route path="/product" element={<Product />} />
             <Route index path="/pricing" element={<Pricing />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
+      {/* </AuthProvider> */}
     </>
   );
 }
