@@ -12,10 +12,13 @@ import Dashboard from "../model/productPages/Dashboard";
 import Settings from "../model/productPages/Settings";
 import Talk from "../model/productPages/Talk";
 import Favorite from "../model/productPages/Favorites";
+import CreateRecipe from "../model/productPages/CreateRecipe";
+
+
 export default function Navigation() {
   return (
     <>
-      {/* <AuthProvider> */}
+       <AuthProvider> 
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -23,9 +26,9 @@ export default function Navigation() {
             <Route
               path="/dashboard"
               element={
-                
+                <ReqAut>
                   <Dashboard />
-                
+                  </ReqAut>
               }
             />
 
@@ -50,9 +53,18 @@ export default function Navigation() {
             <Route
             path="/favorites"
             element={
-              
+              <ReqAut>
                 <Favorite />
-              
+                </ReqAut>
+            }
+            />
+
+            <Route
+            path="/recipes"
+            element={
+              <ReqAut>
+                <CreateRecipe/>
+              </ReqAut>
             }
             />
 
@@ -61,7 +73,7 @@ export default function Navigation() {
             <Route path="/signup" element={<SignUp />} />
           </Routes>
         </BrowserRouter>
-      {/* </AuthProvider> */}
+      </AuthProvider>
     </>
   );
 }

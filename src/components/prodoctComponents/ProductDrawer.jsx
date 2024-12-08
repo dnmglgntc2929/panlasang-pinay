@@ -27,6 +27,8 @@ import { Link } from "react-router-dom";
 import useLocalStorage from "use-local-storage";
 import Pinoyicon from "../../assets/logo2.png";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import CreateIcon from '@mui/icons-material/Create';
+
 
 const drawerWidth = 240;
 
@@ -87,6 +89,7 @@ export default function ProductDrawer() {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Talk", path: "/talk" },
     { name: "Favorites", path: "/Favorites" },
+    { name: "Create Recipes", path: "/recipes"},
     { name: "Settings", path: "/settings" },
   ];
 
@@ -187,7 +190,8 @@ export default function ProductDrawer() {
                   {index === 0 && <DashboardIcon />}
                   {index === 1 && <RecordVoiceOverIcon />}
                   {index === 2 && <FavoriteIcon />}
-                  {index === 3 && <SettingsIcon />}
+                  {index === 3 && <CreateIcon />}
+                  {index === 4 && <SettingsIcon />}
                 </ListItemIcon>
                 <ListItemText primary={page.name} />
               </ListItemButton>
