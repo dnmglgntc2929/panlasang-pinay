@@ -36,7 +36,7 @@ export const login = async (email, password) => {
 export const searchIngredients = async (searchQuery) => {
   try {
     const response = await Axios.get(
-      `http://localhost:${port}/api/search?query=${searchQuery}`
+      `http://localhost:5000/api/search?query=${searchQuery}`
     );
     return response.data; // Return search results
   } catch (error) {

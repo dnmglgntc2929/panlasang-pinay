@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [ipAddress, setIpAddress] = useState("");
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -44,6 +45,18 @@ export default function LoginPage() {
     return emailRegex.test(email);
   };
 
+  // useEffect(() => {
+  //   const fetchIP = async () => {
+  //     try {
+  //       const res = await Axios.get("https://api.ipify.org?format=json");
+  //       setIpAddress(res.data.ip);
+  //     } catch (err) {
+  //       console.error("Error fetching IP:", err);
+  //     }
+  //   };
+  //   fetchIP();
+  // }, []);
+
   const login = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
@@ -56,7 +69,9 @@ export default function LoginPage() {
       const res = await Axios.post("http://localhost:3001/api/login", {
         email,
         password,
+        ipAddress, // Send IP to backend
       });
+
       if (res.data.auth) {
         localStorage.setItem("jwt", res.data.token); // Save JWT in local storage
         auth.login(res.data.result); // Log in with user sent from Express
@@ -65,7 +80,7 @@ export default function LoginPage() {
         setErrorMessage("Login failed");
       }
     } catch (err) {
-      console.log(err);
+      console.error("Login error:", err);
       setErrorMessage("An error occurred. Please try again.");
     }
   };
@@ -167,7 +182,7 @@ export default function LoginPage() {
 
             <Button
               startIcon={<FacebookIcon />}
-              onClick={() => console.log('Logging in with Facebook')}
+              onClick={() => console.log("Logging in with Facebook")}
               fullWidth
               variant="contained"
               sx={{ bgcolor: "#1877f2", color: "#fff" }}
@@ -176,7 +191,7 @@ export default function LoginPage() {
             </Button>
             <Button
               startIcon={<GoogleIcon />}
-              onClick={() => console.log('Logging in with Google')}
+              onClick={() => console.log("Logging in with Google")}
               fullWidth
               variant="contained"
               sx={{ mt: 1, bgcolor: "#DB4437", color: "#fff" }}
@@ -185,7 +200,7 @@ export default function LoginPage() {
             </Button>
             <Button
               startIcon={<XIcon />}
-              onClick={() => console.log('Logging in with Twitter')}
+              onClick={() => console.log("Logging in with Twitter")}
               fullWidth
               variant="contained"
               sx={{ mt: 1, bgcolor: "#1DA1F2", color: "#fff" }}

@@ -14,13 +14,71 @@ import {
 import Cards from "../../components/Cards";
 import axios from "axios";
 import withUserData from "../../components/UserData";
-import placeholderImage from "../../assets/gulay.png";
+import vegie from "../../assets/gulay.png";
+import chicken from "../../assets/Dishes/Chicken/adobong manok.jpg";
+import pork from "../../assets/Dishes/Pork/adobong baboy.jpg";
+import seafood from "../../assets/Dishes/Seafoods/Dinengdeng.jpg";
+import beef from "../../assets/Dishes/Beef/Beef Kaldereta.jpg";
+import dessert from "../../assets/Dishes/Dessert.kakanin/Bibingka.jpg";
 
-import searchIngredients from "../../services/Axios";
+import * as AxiosService from "../../services/Axios";
 import manokAdobo from "../../assets/adobong manok.jpg";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
+
+import lomi from "../../assets/Dishes/Chicken/lomi.jpg";
+import tinola from "../../assets/Dishes/Chicken/tinolang manok.jpg";
+import arrozCaldo from "../../assets/Dishes/Chicken/arroz caldo.jpg";
+
+import adobongBaboy from "../../assets/Dishes/Pork/adobong baboy.jpg";
+import bicolExpress from "../../assets/Dishes/Pork/bicol express.jpg";
+import binagoongan from "../../assets/Dishes/Pork/binagoongan.jpg";
+import bopis from "../../assets/Dishes/Pork/bopis.jpg";
+import chicharongBulaklak from "../../assets/Dishes/Pork/chicharon Bulaklak.jpg";
+import crispyPata from "../../assets/Dishes/Pork/crispy pata.jpg";
+import karekare from "../../assets/Dishes/Pork/Kare-Kare Baboy.jpg";
+import lechonKawali from "../../assets/Dishes/Pork/LEchon Kawali.jpg";
+import liempo from "../../assets/Dishes/Pork/liempo.jpg";
+import longanisa from "../../assets/Dishes/Pork/longanisa.jpg";
+import lumpiangShanghai from "../../assets/Dishes/Pork/lumpiang shanghai.jpg";
+import paksiwPata from "../../assets/Dishes/Pork/paksiw na pata.jpg";
+import pancitCanton from "../../assets/Dishes/Pork/pancit canton.jpg";
+import porkDinuguan from "../../assets/Dishes/Pork/Pork Dinuguan.jpg";
+import porkSisig from "../../assets/Dishes/Pork/pork sisig.jpg";
+import sinigangBaboy from "../../assets/Dishes/Pork/Sinigang na baboy.jpg";
+
+import dinengdeng from "../../assets/Dishes/Seafoods/Dinengdeng.jpg";
+import palabok from "../../assets/Dishes/Seafoods/palabok.jpg";
+import PancitCanton from "../../assets/Dishes/Seafoods/Pancit canton.jpg";
+import sinigangHipon from "../../assets/Dishes/Seafoods/sinigang na hipon.jpg";
+
+import beefKaldereta from "../../assets/Dishes/Beef/Beef Kaldereta.jpg";
+import bistek from "../../assets/Dishes/Beef/bistek tagalog.jpg";
+import bulalo from "../../assets/Dishes/Beef/bulalo.jpg";
+import nilaga from "../../assets/Dishes/Beef/Nilagang Baka.jpg";
+import tapsilog from "../../assets/Dishes/Beef/tapsilog.jpg";
+
+import pinakbet from "../../assets/Dishes/Vegetable/yawa.jpg";
+import ensalada from "../../assets/Dishes/Vegetable/ensaladang talong.jpg";
+import torta from "../../assets/Dishes/Vegetable/bushit.jpg";
+import ginisangMonggo from "../../assets/Dishes/Vegetable/ginisang monggo.jpg";
+import laing from "../../assets/Dishes/Vegetable/laing.jpg";
+import ginataangLaygo from "../../assets/Dishes/Vegetable/ginataang gulay.jpg";
+
+import bingka from "../../assets/Dishes/Dessert.Kakanin/bibingka.jpg";
+import bukoPie from "../../assets/Dishes/Dessert.Kakanin/buko pie.jpg";
+import kamoteCUe from "../../assets/Dishes/Dessert.Kakanin/camote cue.jpg";
+import champorado from "../../assets/Dishes/Dessert.Kakanin/champorado.jpg";
+import empanada from "../../assets/Dishes/Dessert.Kakanin/empanada.jpg";
+import haloHalo from "../../assets/Dishes/Dessert.Kakanin/halo halo.jpg";
+import kutsinta from "../../assets/Dishes/Dessert.Kakanin/kutsinta.jpg";
+import lecheflan from "../../assets/Dishes/Dessert.Kakanin/lecheflan.jpg";
+import pandesal from "../../assets/Dishes/Dessert.Kakanin/pandesal.jpg";
+import putoBongbong from "../../assets/Dishes/Dessert.Kakanin/puto bumbong.jpg";
+import sapin from "../../assets/Dishes/Dessert.Kakanin/sapin sapin.jpg";
+import turon from "../../assets/Dishes/Dessert.Kakanin/turon.jpg";
+import ubeHalaya from "../../assets/Dishes/Dessert.Kakanin/ube halaya.jpg";
 
 const Dashboard = () => {
   const [user, setUser] = useState("");
@@ -36,7 +94,6 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [likedDishes, setLikedDishes] = useState({});
   const navigate = useNavigate();
-  
 
   const handleFavoritesNavigation = () => {
     navigate("/favorites");
@@ -56,101 +113,186 @@ const Dashboard = () => {
     }
   }, []);
 
+  const dishImageMap = {
+    lomi: lomi,
+    "tinolang manok": tinola,
+    "arroz caldo": arrozCaldo,
+    "adobong baboy": adobongBaboy,
+    "bicol express": bicolExpress,
+    binagoongan: binagoongan,
+    bopis: bopis,
+    "chicharon Bulaklak": chicharongBulaklak,
+    "crispy pata": crispyPata,
+    "Kare-Kare Baboy": karekare,
+    "Lechon Kawali": lechonKawali,
+    liempo: liempo,
+    longanisa: longanisa,
+    "lumpiang shanghai": lumpiangShanghai,
+    "paksiw na pata": paksiwPata,
+    "pancit canton": pancitCanton,
+    "Pork Dinuguan": porkDinuguan,
+    "pork sisig": porkSisig,
+    "Sinigang na baboy": sinigangBaboy,
+    Dinengdeng: dinengdeng,
+    palabok: palabok,
+    "Pancit canton": PancitCanton,
+    "sinigang na hipon": sinigangHipon,
+    "Beef Kaldereta": beefKaldereta,
+    "bistek tagalog": bistek,
+    bulalo: bulalo,
+    "Nilagang Baka": nilaga,
+    tapsilog: tapsilog,
+    pinakbet: pinakbet,
+    "ensaladang talong": ensalada,
+    bushit: torta,
+    "ginisang monggo": ginisangMonggo,
+    laing: laing,
+    "ginataang gulay": ginataangLaygo,
+    bibingka: bingka,
+    "buko pie": bukoPie,
+    "camote cue": kamoteCUe,
+    champorado: champorado,
+    empanada: empanada,
+    "halo halo": haloHalo,
+    kutsinta: kutsinta,
+    lecheflan: lecheflan,
+    pandesal: pandesal,
+    "puto bumbong": putoBongbong,
+    "sapin sapin": sapin,
+    turon: turon,
+    "ube halaya": ubeHalaya,
+  };
+
+  const RecipeModal = ({
+    openRecipeModal,
+    handleCloseRecipeModal,
+    selectedDish,
+    selectedSearchResult,
+  }) => {
+    const dishName = selectedDish?.name || selectedSearchResult?.name;
+    const dishImage = dishImageMap[dishName];
+
+    return (
+      <Modal open={openRecipeModal} onClose={handleCloseRecipeModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            maxWidth: "600px",
+            maxHeight: "80vh",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "8px",
+            overflowY: "auto",
+          }}
+        >
+          <Typography variant="h4" component="h2" gutterBottom>
+            Recipe for {dishName}
+          </Typography>
+
+          {dishImage && (
+            <img
+              src={dishImage}
+              alt={dishName}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                marginBottom: "16px",
+              }}
+            />
+          )}
+
+          <Typography variant="body1" gutterBottom>
+            {selectedDish?.description || selectedSearchResult?.description}
+          </Typography>
+
+          {/* Ingredients */}
+          <Typography variant="h4">Ingredients:</Typography>
+          {(
+            selectedDish?.recipe.ingredients ||
+            selectedSearchResult?.ingredients
+          )?.length > 0 ? (
+            <ul>
+              {(
+                selectedDish?.recipe.ingredients ||
+                selectedSearchResult?.ingredients
+              ).map((ingredient, index) => (
+                <li key={index}>{ingredient}</li>
+              ))}
+            </ul>
+          ) : (
+            <Typography variant="body2">No ingredients available.</Typography>
+          )}
+
+          {/* Steps */}
+          <Typography variant="h4">Steps:</Typography>
+          {(selectedDish?.recipe.steps || selectedSearchResult?.steps)?.length >
+          0 ? (
+            <ol>
+              {(selectedDish?.recipe.steps || selectedSearchResult?.steps).map(
+                (step, index) => (
+                  <li key={index}>{step}</li>
+                )
+              )}
+            </ol>
+          ) : (
+            <Typography variant="body2">No steps available.</Typography>
+          )}
+
+          <Button
+            onClick={handleCloseRecipeModal}
+            sx={{ mt: 3, display: "block", margin: "0 auto" }}
+            variant="contained"
+          >
+            Close Recipe
+          </Button>
+        </Box>
+      </Modal>
+    );
+  };
+
   // Animal data
   const animalDishes = {
     Chicken: [
       {
         name: "Adobong Manok",
-        description:
-          "Chicken braised in soy sauce, vinegar, and garlic, a staple in Filipino households.",
+        description: "Chicken braised in soy sauce, vinegar, and garlic.",
         recipe: {
-          ingredients: [
-            "1kg Chicken",
-            "1/2 cup Soy sauce",
-            "1/4 cup Vinegar",
-            "5 GlovesGarlic",
-            "3 Bay leaves",
-            "1tsp peppercorns",
-            "1/2 cup water",
-            "Salt to taste",
-          ],
-          steps: [
-            "Marinate the chicken in soy sauce, vinegar, garlic, and bay leaves for 30 minutes.",
-            "Cook in a pan over medium heat until the chicken is tender.",
-            "Serve with rice.",
-          ],
-          images: {
-            image1: manokAdobo,
-          },
+          ingredients: ["1kg Chicken", "1/2 cup Soy sauce", "1/4 cup Vinegar"],
+          steps: ["Marinate chicken", "Cook until tender"],
+          images: [manokAdobo], // Add image reference here
         },
       },
-
       {
         name: "Lomi",
-        description:
-          "Thick egg noodle soup with meat and vegetables, commonly served hot and comforting.",
+        description: "Thick egg noodle soup with meat and vegetables.",
         recipe: {
-          ingredients: [
-            "200g egg noodles",
-            "100g pork",
-            "100g shrimp",
-            "1 egg",
-            "1/2 cup cabbage",
-            "1 carrot",
-            "5 cloves garlic",
-            "1 onion",
-            "1/4 cup fish sauce",
-            "1/4 cup soy sauce",
-          ],
-          steps: [
-            "Boil noodles with meat and vegetables",
-            "Serve hot with broth",
-          ],
+          ingredients: ["200g egg noodles", "100g pork"],
+          steps: ["Boil noodles", "Serve hot"],
+          images: [lomi],
         },
       },
       {
         name: "Tinolang Manok",
         description:
-          "A light chicken soup with ginger, papaya, and chili leaves, creating a comforting and nutritious dish.",
+          "A light chicken soup with ginger, papaya, and chili leaves.",
         recipe: {
-          ingredients: [
-            "1kgChicken",
-            "1 Green papaya",
-            "50g Ginger",
-            "5 Gloves Garlic",
-            "1 Onion",
-            "1cup Malunggay Leaves",
-            "1tbsp Fish Sauce",
-            "Salt and pepper to taste",
-          ],
-          steps: [
-            " Sauté ginger and onion, then add chicken.",
-            " Pour water and add green papaya and chili leaves. ",
-            " Simmer until chicken is cooked through.",
-            " Season with salt and serve hot.",
-          ],
+          ingredients: ["1kg Chicken", "1 Green papaya"],
+          steps: ["Sauté ginger and onion", "Simmer until cooked"],
+          images: [tinola],
         },
       },
       {
         name: "Arroz Caldo",
-        description:
-          "A comforting rice porridge with chicken, ginger, and garlic, topped with fried garlic and green onions.",
+        description: "A comforting rice porridge with chicken and garlic.",
         recipe: {
-          ingredients: [
-            "1 cup glutinous rice",
-            "500g chicken",
-            "5 cloves garlic",
-            " 1 onion, 50g ginger",
-            "1 tbsp fish sauce",
-            "salt to taste",
-            "green onions for garnish",
-          ],
-          steps: [
-            "Sauté garlic, onion, and ginger",
-            "Add chicken and cook until browned",
-            "Add rice and water, simmer until porridge is thick",
-            "Garnish and serve warm",
-          ],
+          ingredients: ["1 cup glutinous rice", "500g chicken"],
+          steps: ["Sauté garlic", "Simmer rice"],
+          images: [arrozCaldo],
         },
       },
     ],
@@ -179,6 +321,7 @@ const Dashboard = () => {
             " Add water and simmer until pork is tender",
             "Adjust seasoning and serve with rice",
           ],
+          images: [adobongBaboy],
         },
       },
       {
@@ -201,6 +344,7 @@ const Dashboard = () => {
             " Add coconut milk and simmer until pork is tender",
             " Season with salt and serve over rice",
           ],
+          images: [bicolExpress],
         },
       },
       {
@@ -221,6 +365,7 @@ const Dashboard = () => {
             "Sauté pork belly with shrimp paste and tomatoes",
             "Simmer until tender and serve with rice",
           ],
+          images: [binagoongan],
         },
       },
       {
@@ -243,6 +388,7 @@ const Dashboard = () => {
             "Add spices and simmer until cooked through",
             "Serve with rice",
           ],
+          images: [bopis],
         },
       },
       {
@@ -261,6 +407,7 @@ const Dashboard = () => {
             "Deep-fry pork intestines until crispy",
             "Serve with dipping sauce",
           ],
+          images: [chicharongBulaklak],
         },
       },
       {
@@ -283,6 +430,7 @@ const Dashboard = () => {
             " Add coconut milk and simmer until pork is tender",
             " Season with salt and serve over rice",
           ],
+          images: [crispyPata],
         },
       },
       {
@@ -308,6 +456,7 @@ const Dashboard = () => {
             " Add peanut butter and vegetables cook until soft",
             "Serve with bagoong (fermented shrimp paste)",
           ],
+          images: [karekare],
         },
       },
       {
@@ -325,6 +474,7 @@ const Dashboard = () => {
             "Boil pork belly until tender",
             "Deep-fry until crispy, then slice and serve with dipping sauce",
           ],
+          images: [lechonKawali],
         },
       },
       {
@@ -346,6 +496,7 @@ const Dashboard = () => {
             "Grill until browned and cooked through",
             " Slice and serve with dipping sauce",
           ],
+          images: [liempo],
         },
       },
       {
@@ -365,6 +516,7 @@ const Dashboard = () => {
             "Shape pork into sausage links with garlic and spices",
             "Fry until browned and serve with rice",
           ],
+          images: [longanisa],
         },
       },
       {
@@ -387,6 +539,7 @@ const Dashboard = () => {
             "Wrap in spring roll wrapper and fry until crispy",
             "Serve with dipping sauce",
           ],
+          images: [lumpiangShanghai],
         },
       },
       {
@@ -410,6 +563,7 @@ const Dashboard = () => {
             " Add banana blossoms and simmer until tender",
             "Serve with rice",
           ],
+          images: [paksiwPata],
         },
       },
       {
@@ -437,6 +591,7 @@ const Dashboard = () => {
             "Add vegetables and stir-fry until well-mixed",
             "Serve warm with calamansi",
           ],
+          images: [pancitCanton],
         },
       },
       {
@@ -457,6 +612,7 @@ const Dashboard = () => {
             "Simmer pork blood with vinegar and spices",
             " Add pork cuts and serve with rice",
           ],
+          images: [porkDinuguan],
         },
       },
       {
@@ -475,6 +631,7 @@ const Dashboard = () => {
             "Grill chopped pig's face until crispy",
             "Serve sizzling with onions and chili",
           ],
+          images: [porkSisig],
         },
       },
       {
@@ -500,6 +657,7 @@ const Dashboard = () => {
             " Season with fish sauce and simmer until pork is tender",
             "Serve hot with rice",
           ],
+          images: [sinigangBaboy],
         },
       },
     ],
@@ -518,6 +676,7 @@ const Dashboard = () => {
             " salt to taste",
           ],
           steps: ["Simmer vegetables with fish sauce", "Serve with rice"],
+          images: [dinengdeng],
         },
       },
       {
@@ -539,6 +698,7 @@ const Dashboard = () => {
             "Layer noodles with sauce, shrimp, and toppings",
             "Serve with calamansi",
           ],
+          images: [palabok],
         },
       },
       {
@@ -563,6 +723,7 @@ const Dashboard = () => {
             "Season with fish sauce",
             "Serve hot with rice",
           ],
+          images: [sinigangHipon],
         },
       },
     ],
@@ -591,6 +752,7 @@ const Dashboard = () => {
             "Simmer until beef is tender",
             "Serve with rice",
           ],
+          images: [beefKaldereta],
         },
       },
       {
@@ -614,6 +776,7 @@ const Dashboard = () => {
             "Add corn and vegetables, then simmer",
             "Season with salt and serve hot",
           ],
+          images: [bulalo],
         },
       },
       {
@@ -633,6 +796,7 @@ const Dashboard = () => {
             "Marinate beef with calamansi and soy sauce",
             "Fry with onions and serve with rice",
           ],
+          images: [bistek],
         },
       },
       {
@@ -654,6 +818,7 @@ const Dashboard = () => {
             "Add corn and vegetables, then simmer",
             "Season with salt and serve hot",
           ],
+          images: [nilaga],
         },
       },
       {
@@ -674,6 +839,7 @@ const Dashboard = () => {
             " Marinate beef, then fry with garlic rice and egg",
             "Serve hot with vinegar",
           ],
+          images: [tapsilog],
         },
       },
     ],
@@ -695,6 +861,7 @@ const Dashboard = () => {
             "Grill eggplant and serve with tomato and onion",
             "Garnish with bagoong",
           ],
+          images: [ensalada],
         },
       },
       {
@@ -713,6 +880,7 @@ const Dashboard = () => {
             "Mash and mix with eggs",
             "Fry until golden brown",
           ],
+          images: [torta],
         },
       },
       {
@@ -734,6 +902,7 @@ const Dashboard = () => {
             "Simmer until creamy and vegetables are tender",
             "Serve with rice",
           ],
+          images: [ginataangLaygo],
         },
       },
       {
@@ -756,6 +925,7 @@ const Dashboard = () => {
             "Serve with rice",
             ,
           ],
+          images: [ginisangMonggo],
         },
       },
       {
@@ -777,6 +947,7 @@ const Dashboard = () => {
             "Simmer until leaves are tender and sauce is creamy",
             "Serve with rice",
           ],
+          images: [laing],
         },
       },
       {
@@ -799,6 +970,7 @@ const Dashboard = () => {
             "Add vegetables and cook until tender",
             "Serve as a side dish",
           ],
+          images: [pinakbet],
         },
       },
     ],
@@ -822,6 +994,7 @@ const Dashboard = () => {
             " Bake until set and serve warm",
             ,
           ],
+          images: [bingka],
         },
       },
       {
@@ -842,6 +1015,7 @@ const Dashboard = () => {
             "Serve warm as dessert",
             ,
           ],
+          images: [bukoPie],
         },
       },
       {
@@ -859,6 +1033,7 @@ const Dashboard = () => {
             "Coat with caramelized sugar and serve",
             ,
           ],
+          images: [kamoteCUe],
         },
       },
       {
@@ -877,6 +1052,7 @@ const Dashboard = () => {
             " Serve hot with milk",
             ,
           ],
+          images: [champorado],
         },
       },
       {
@@ -898,6 +1074,7 @@ const Dashboard = () => {
             "Fill pastry with meat filling and bake until golden",
             "Serve warm",
           ],
+          images: [empanada],
         },
       },
       {
@@ -916,6 +1093,7 @@ const Dashboard = () => {
             "Layer shaved ice with sweet beans, fruits, and toppings",
             "Serve cold",
           ],
+          images: [haloHalo],
         },
       },
       {
@@ -934,6 +1112,7 @@ const Dashboard = () => {
             "Steam rice flour mixture with annatto and sugar",
             "Top with coconut and serve",
           ],
+          images: [kutsinta],
         },
       },
       {
@@ -948,6 +1127,7 @@ const Dashboard = () => {
             " 1/4 cup sugar for caramel",
           ],
           steps: ["Cook caramel custard until set", "Serve as dessert"],
+          images: [lecheflan],
         },
       },
       {
@@ -965,6 +1145,7 @@ const Dashboard = () => {
             " 1 egg",
           ],
           steps: ["Bake dough until golden", "Serve with butter"],
+          images: [pandesal],
         },
       },
       {
@@ -980,6 +1161,7 @@ const Dashboard = () => {
             " 1/4 cup brown sugar",
           ],
           steps: ["Steam sticky rice with coconut", "Serve with sugar"],
+          images: [putoBongbong],
         },
       },
       {
@@ -998,6 +1180,7 @@ const Dashboard = () => {
             "Layer sticky rice in colors and steam",
             "Serve as a sweet dessert",
           ],
+          images: [sapin],
         },
       },
       {
@@ -1016,6 +1199,7 @@ const Dashboard = () => {
             "Wrap plantain in spring roll wrapper with sugar",
             "Fry until golden and serve",
           ],
+          images: [turon],
         },
       },
       {
@@ -1034,6 +1218,7 @@ const Dashboard = () => {
             "Cook purple yam with sugar and coconut milk",
             "Mash until smooth and serve",
           ],
+          images: [ubeHalaya],
         },
       },
       // ... other pork dishes ...
@@ -1101,8 +1286,24 @@ const Dashboard = () => {
     setSearchQuery(e.target.value);
   };
 
+  const handleError = (error) => {
+    if (error.response) {
+      console.error(
+        "Server Error:",
+        error.response.status,
+        error.response.data
+      );
+      setErrorMessage("Server error occurred. Please try again later.");
+    } else if (error.request) {
+      console.error("Network Error:", error.request);
+      setErrorMessage("Network error. Please check your internet connection.");
+    } else {
+      console.error("Error", error.message);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
+  };
+
   const handleSearchSubmit = async () => {
-    // Clear previous error messages and search results
     setErrorMessage("");
     setSearchResults([]);
     setOpenSearchResultsModal(false);
@@ -1116,68 +1317,18 @@ const Dashboard = () => {
     setIsLoading(true);
 
     try {
-      const results = await searchIngredients(searchQuery); // Call the search API from Axios file
-      setSearchResults(results); // Set the search results
-
-      const response = await axios.post(
-        "http://127.0.0.1:5000/api/recipes/ingredient_search",
-        { ingredients: searchQuery.split(",").map((item) => item.trim()) },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const results = await AxiosService.searchIngredients(
+        trimmedQuery.split(",").map((item) => item.trim())
       );
-
-      if (response.status === 200) {
-        if (Array.isArray(response.data)) {
-          if (response.data.length > 0) {
-            const enrichedResults = response.data.map((recipe) => {
-              return {
-                ...recipe,
-                recipe: {
-                  ingredients: recipe.ingredients,
-                  steps: recipe.steps,
-                },
-              };
-            });
-            setSearchResults(enrichedResults);
-            setOpenSearchResultsModal(true); // Open the modal
-          } else {
-            // No recipes found
-            setErrorMessage("No recipes found matching your ingredients.");
-          }
-        } else {
-          // Unexpected response format
-          console.error("Unexpected response format:", response.data);
-          setErrorMessage("Unexpected response from server.");
-        }
+      if (results.length > 0) {
+        setSearchResults(results);
+        setOpenSearchResultsModal(true);
       } else {
-        // Non-200 status code
-        console.error("Server responded with status:", response.status);
-        setErrorMessage("Server error occurred. Please try again later.");
+        setErrorMessage("No recipes found matching your ingredients.");
       }
     } catch (error) {
-      console.error("Error fetching search results", error);
-      if (error.response) {
-        // Server responded with a status code outside the 2xx range
-        console.error(
-          "Server Error:",
-          error.response.status,
-          error.response.data
-        );
-        setErrorMessage("Server error occurred. Please try again later.");
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error("Network Error:", error.request);
-        setErrorMessage(
-          "Network error. Please check your internet connection."
-        );
-      } else {
-        // Something else happened
-        console.error("Error", error.message);
-        setErrorMessage("An unexpected error occurred. Please try again.");
-      }
+      console.error("Error fetching search results:", error);
+      setErrorMessage("An error occurred while searching for recipes.");
     } finally {
       setIsLoading(false);
     }
@@ -1233,12 +1384,12 @@ const Dashboard = () => {
               }}
             >
               {[
-                { animal: "Chicken", image: placeholderImage },
-                { animal: "Pork", image: placeholderImage },
-                { animal: "Seafoods", image: placeholderImage },
-                { animal: "Beef", image: placeholderImage },
-                { animal: "Vegies", image: placeholderImage },
-                { animal: "Dessert", image: placeholderImage },
+                { animal: "Chicken", image: chicken },
+                { animal: "Pork", image: pork },
+                { animal: "Seafoods", image: seafood },
+                { animal: "Beef", image: beef },
+                { animal: "Vegies", image: vegie },
+                { animal: "Dessert", image: dessert },
               ].map(({ animal, image }) => (
                 <IconButton
                   key={animal}
@@ -1451,73 +1602,96 @@ const Dashboard = () => {
           }}
         >
           <Typography variant="h6" gutterBottom>
-  {selectedAnimal
-    ? `${selectedAnimal.charAt(0).toUpperCase()}${selectedAnimal.slice(1)} Dishes`
-    : "Select Animal Dishes"}
-</Typography>
-
-<Grid container spacing={3}>
-  {animalDishes[selectedAnimal] && Array.isArray(animalDishes[selectedAnimal]) ? (
-    animalDishes[selectedAnimal].map((dish, index) => (
-      <Grid item xs={12} md={6} key={index}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            padding: "16px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            cursor: "pointer",
-            position: "relative", // For positioning the heart button
-          }}
-          onClick={() => handleOpenRecipeModal(dish)}
-        >
-          {/* Heart React Button */}
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: "8px",
-              right: "8px",
-              color: likedDishes[dish.name] ? "red" : "gray",
-            }}
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent triggering the modal
-              toggleLike(dish);
-            }}
-          >
-            {likedDishes[dish.name] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-          </IconButton>
-
-          <Box
-            sx={{
-              width: "100%",
-              height: "150px",
-              backgroundColor: "#f0f0f0",
-              borderRadius: "8px",
-              marginBottom: "8px",
-            }}
-          >
-            <Typography variant="body2" sx={{ lineHeight: "150px" }}>
-              Image Placeholder
-            </Typography>
-          </Box>
-          <Typography variant="subtitle1" gutterBottom>
-            {dish.name}
+            {selectedAnimal
+              ? `${selectedAnimal
+                  .charAt(0)
+                  .toUpperCase()}${selectedAnimal.slice(1)} Dishes`
+              : "Select Animal Dishes"}
           </Typography>
-          <Typography variant="body2">{dish.description}</Typography>
-        </Box>
-      </Grid>
-    ))
-  ) : (
-    <Typography variant="body2">
-      No dishes available for this category.
-    </Typography>
-  )}
-</Grid>;
+          <Grid container spacing={3}>
+            {animalDishes[selectedAnimal] &&
+            Array.isArray(animalDishes[selectedAnimal]) ? (
+              animalDishes[selectedAnimal].map((dish, index) => (
+                <Grid item xs={12} md={6} key={index}>
+                  <Box
+                    sx={{
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      textAlign: "center",
+                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                      cursor: "pointer",
+                      position: "relative", // For positioning the heart button
+                    }}
+                    onClick={() => handleOpenRecipeModal(dish)}
+                  >
+                    {/* Heart React Button */}
+                    <IconButton
+                      sx={{
+                        position: "absolute",
+                        top: "8px",
+                        right: "8px",
+                        color: likedDishes[dish.name] ? "red" : "gray",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the modal
+                        toggleLike(dish);
+                      }}
+                    >
+                      {likedDishes[dish.name] ? (
+                        <FavoriteIcon />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
+                    </IconButton>
 
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "150px",
+                        backgroundColor: "#f0f0f0",
+                        borderRadius: "8px",
+                        marginBottom: "8px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {dish.recipe.images && dish.recipe.images.length > 0 ? (
+                        <img
+                          src={dish.recipe.images[0]} // Display the first image
+                          alt={dish.name}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover", // Maintain aspect ratio and cover space
+                            borderRadius: "8px",
+                          }}
+                        />
+                      ) : (
+                        <Typography variant="body2">
+                          No Image Available
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Typography variant="subtitle1" gutterBottom>
+                      {dish.name}
+                    </Typography>
+                    <Typography variant="body2">{dish.description}</Typography>
+                  </Box>
+                </Grid>
+              ))
+            ) : (
+              <Typography variant="body2">
+                No dishes available for this category.
+              </Typography>
+            )}
+          </Grid>
 
           <Button
             onClick={handleCloseModal}
@@ -1530,62 +1704,12 @@ const Dashboard = () => {
       </Modal>
 
       {/* Modal for Recipe Details */}
-      <Modal open={openRecipeModal} onClose={handleCloseRecipeModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "80%",
-            maxWidth: "600px",
-            maxHeight: "80vh",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: "8px",
-            overflowY: "auto",
-          }}
-        >
-          <Typography variant="h4" component="h2" gutterBottom>
-            Recipe for {selectedDish?.name}
-            Recipe for {selectedDish?.name || selectedSearchResult?.name}
-          </Typography>
-
-          <Typography variant="body1" gutterBottom>
-            {selectedDish?.description || selectedSearchResult?.description}
-          </Typography>
-
-          {/* Ingredients */}
-          <Typography variant="h4">Ingredients:</Typography>
-          <ul>
-            {(
-              selectedDish?.recipe.ingredients ||
-              selectedSearchResult?.recipe?.ingredients
-            )?.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
-            ))}
-          </ul>
-
-          {/* Steps */}
-          <Typography variant="h4">Steps:</Typography>
-          <ol>
-            {(
-              selectedDish?.recipe.steps || selectedSearchResult?.recipe?.steps
-            )?.map((step, index) => (
-              <li key={index}>{step}</li>
-            ))}
-          </ol>
-
-          <Button
-            onClick={handleCloseRecipeModal}
-            sx={{ mt: 3, display: "block", margin: "0 auto" }}
-            variant="contained"
-          >
-            Close Recipe
-          </Button>
-        </Box>
-      </Modal>
+      <RecipeModal
+        openRecipeModal={openRecipeModal}
+        handleCloseRecipeModal={handleCloseRecipeModal}
+        selectedDish={selectedDish}
+        selectedSearchResult={selectedSearchResult}
+      />
     </div>
   );
 };

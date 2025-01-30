@@ -14,11 +14,10 @@ import Talk from "../model/productPages/Talk";
 import Favorite from "../model/productPages/Favorites";
 import CreateRecipe from "../model/productPages/CreateRecipe";
 
-
 export default function Navigation() {
   return (
     <>
-       <AuthProvider> 
+      <AuthProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -28,7 +27,7 @@ export default function Navigation() {
               element={
                 <ReqAut>
                   <Dashboard />
-                  </ReqAut>
+                </ReqAut>
               }
             />
 
@@ -51,21 +50,21 @@ export default function Navigation() {
               }
             />
             <Route
-            path="/favorites"
-            element={
-              <ReqAut>
-                <Favorite />
+              path="/favorites"
+              element={
+                <ReqAut>
+                  <Favorite />
                 </ReqAut>
-            }
+              }
             />
 
             <Route
-            path="/recipes"
-            element={
-              <ReqAut>
-                <CreateRecipe/>
-              </ReqAut>
-            }
+              path="/recipes"
+              element={
+                <ReqAut>
+                  <CreateRecipe />
+                </ReqAut>
+              }
             />
 
             <Route path="/product" element={<Product />} />

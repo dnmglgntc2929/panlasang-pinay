@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import ProductDrawer from "../../components/prodoctComponents/ProductDrawer";
-import { 
-  AppBar, 
-  Toolbar, 
-  Grid, 
-  Box, 
-  Button, 
-  Typography, 
-  TextField, 
-  Paper, 
-  Card, 
-  CardContent, 
-  Container, 
-  IconButton 
+import {
+  AppBar,
+  Toolbar,
+  Grid,
+  Box,
+  Button,
+  Typography,
+  TextField,
+  Paper,
+  Card,
+  CardContent,
+  Container,
+  IconButton,
 } from "@mui/material";
 import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
@@ -36,15 +36,17 @@ const CreateRecipe = () => {
       console.error("No token found. Please log in.");
       return;
     }
-  
+
     try {
       const decodedToken = jwtDecode(token);
       const userIdFromToken = decodedToken.userId || decodedToken.id;
-  
+
       setUserId(userIdFromToken);
-  
+
       axios
-        .get("http://localhost:3001/api/recipes", { headers: { "x-access-token": token } })
+        .get("http://localhost:3001/api/recipes", {
+          headers: { "x-access-token": token },
+        })
         .then((response) => setRecipes(response.data))
         .catch((error) => console.error("Error fetching recipes:", error));
     } catch (error) {
@@ -52,6 +54,38 @@ const CreateRecipe = () => {
     }
   }, []);
 
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const token = localStorage.getItem("jwt");
+  //   if (!token || !userId) {
+  //     console.error("User not authenticated.");
+  //     return;
+  //   }
+
+  //   axios
+  //     .post(
+  //       "http://localhost:3001/api/recipes",
+  //       { userId, title, ingredients, instructions },
+  //       {
+  //         headers: {
+  //           "x-access-token": token,
+  //         },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       // After successfully adding a recipe, re-fetch all recipes
+  //       axios
+  //         .get("http://localhost:3001/api/recipes", { headers: { "x-access-token": token } })
+  //         .then((response) => setRecipes(response.data))
+  //         .catch((error) => console.error("Error fetching updated recipes:", error));
+
+  //       // Clear form inputs after saving
+  //       setTitle("");
+  //       setIngredients("");
+  //       setInstructions("");
+  //     })
+  //     .catch((error) => console.error("Error creating recipe:", error));
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem("jwt");
@@ -59,7 +93,7 @@ const CreateRecipe = () => {
       console.error("User not authenticated.");
       return;
     }
-  
+
     axios
       .post(
         "http://localhost:3001/api/recipes",
@@ -71,20 +105,14 @@ const CreateRecipe = () => {
         }
       )
       .then((response) => {
-        // After successfully adding a recipe, re-fetch all recipes
-        axios
-          .get("http://localhost:3001/api/recipes", { headers: { "x-access-token": token } })
-          .then((response) => setRecipes(response.data))
-          .catch((error) => console.error("Error fetching updated recipes:", error));
-  
-        // Clear form inputs after saving
+        // Optimistically add the new recipe
+        setRecipes((prevRecipes) => [response.data, ...prevRecipes]);
         setTitle("");
         setIngredients("");
         setInstructions("");
       })
       .catch((error) => console.error("Error creating recipe:", error));
   };
-  
 
   const handleEdit = (recipe) => {
     setEditingRecipeId(recipe.id); // Set the recipe being edited
@@ -103,10 +131,15 @@ const CreateRecipe = () => {
     axios
       .put(
         `http://localhost:3001/api/recipes/${editingRecipeId}`,
-        { title: editTitle, ingredients: editIngredients, instructions: editInstructions },
+        {
+          title: editTitle,
+          ingredients: editIngredients,
+          instructions: editInstructions,
+        },
         { headers: { "x-access-token": token } }
       )
       .then((response) => {
+        // Optimistically update the recipe in the state
         setRecipes((prevRecipes) =>
           prevRecipes.map((recipe) =>
             recipe.id === editingRecipeId ? response.data : recipe
@@ -124,6 +157,11 @@ const CreateRecipe = () => {
       return;
     }
 
+    // Optimistically remove the recipe
+    setRecipes((prevRecipes) =>
+      prevRecipes.filter((recipe) => recipe.id !== recipeId)
+    );
+
     axios
       .delete(`http://localhost:3001/api/recipes/${recipeId}`, {
         headers: {
@@ -131,10 +169,16 @@ const CreateRecipe = () => {
         },
       })
       .then(() => {
-        setRecipes(recipes.filter((recipe) => recipe.id !== recipeId));
         alert("Recipe deleted successfully");
       })
-      .catch((error) => console.error("Error deleting recipe:", error));
+      .catch((error) => {
+        console.error("Error deleting recipe:", error);
+        // Revert state if deletion fails
+        setRecipes((prevRecipes) => [
+          ...prevRecipes,
+          recipes.find((r) => r.id === recipeId),
+        ]);
+      });
   };
 
   return (
@@ -156,7 +200,9 @@ const CreateRecipe = () => {
                 boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <Typography sx={{ fontWeight: 600, fontSize: "24px", marginBottom: 2 }}>
+              <Typography
+                sx={{ fontWeight: 600, fontSize: "24px", marginBottom: 2 }}
+              >
                 Create New Recipe
               </Typography>
               <form onSubmit={handleSubmit}>
@@ -213,82 +259,99 @@ const CreateRecipe = () => {
               Community Recipes
             </Typography>
             <Paper sx={{ maxHeight: 550, overflow: "auto", padding: 2 }}>
-  {recipes.map((recipe, index) => (
-    <Card
-      key={recipe.id || index} // Fallback to index if id is missing
-      sx={{
-        borderRadius: "8px",
-        marginBottom: 2,
-        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <CardContent>
-        {editingRecipeId === recipe.id ? (
-          <>
-            <TextField
-              label="Edit Title"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Edit Ingredients"
-              value={editIngredients}
-              onChange={(e) => setEditIngredients(e.target.value)}
-              multiline
-              rows={3}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Edit Instructions"
-              value={editInstructions}
-              onChange={(e) => setEditInstructions(e.target.value)}
-              multiline
-              rows={3}
-              fullWidth
-              margin="normal"
-            />
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="contained" onClick={handleSaveEdit}>
-                Save
-              </Button>
-              <Button variant="outlined" onClick={() => setEditingRecipeId(null)}>
-                Cancel
-              </Button>
-            </Box>
-          </>
-        ) : (
-          <>
-            <Typography variant="h6" sx={{ fontWeight: 600, color: "#333" }}>
-              {recipe.title}
-            </Typography>
-            <Typography sx={{ color: "#555", marginBottom: 1 }}>
-              <strong>Ingredients:</strong> {recipe.ingredients}
-            </Typography>
-            <Typography sx={{ color: "#555", marginBottom: 1 }}>
-              <strong>Instructions:</strong> {recipe.instructions}
-            </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              {recipe.user_id === userId && (
-                <>
-                  <IconButton onClick={() => handleEdit(recipe)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(recipe.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </>
-              )}
-            </Box>
-          </>
-        )}
-      </CardContent>
-    </Card>
-  ))}
-</Paper>
-
+              {recipes.map((recipe, index) => (
+                <Card
+                  key={recipe.id || index} // Fallback to index if id is missing
+                  sx={{
+                    borderRadius: "8px",
+                    marginBottom: 2,
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <CardContent>
+                    {editingRecipeId === recipe.id ? (
+                      <>
+                        <TextField
+                          label="Edit Title"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          fullWidth
+                          margin="normal"
+                        />
+                        <TextField
+                          label="Edit Ingredients"
+                          value={editIngredients}
+                          onChange={(e) => setEditIngredients(e.target.value)}
+                          multiline
+                          rows={3}
+                          fullWidth
+                          margin="normal"
+                        />
+                        <TextField
+                          label="Edit Instructions"
+                          value={editInstructions}
+                          onChange={(e) => setEditInstructions(e.target.value)}
+                          multiline
+                          rows={3}
+                          fullWidth
+                          margin="normal"
+                        />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Button variant="contained" onClick={handleSaveEdit}>
+                            Save
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            onClick={() => setEditingRecipeId(null)}
+                          >
+                            Cancel
+                          </Button>
+                        </Box>
+                      </>
+                    ) : (
+                      <>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontWeight: 600, color: "#333" }}
+                        >
+                          {recipe.title}
+                        </Typography>
+                        <Typography sx={{ color: "#555", marginBottom: 1 }}>
+                          <strong>Ingredients:</strong> {recipe.ingredients}
+                        </Typography>
+                        <Typography sx={{ color: "#555", marginBottom: 1 }}>
+                          <strong>Instructions:</strong> {recipe.instructions}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          {recipe.user_id === userId && (
+                            <>
+                              <IconButton onClick={() => handleEdit(recipe)}>
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                onClick={() => handleDelete(recipe.id)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </>
+                          )}
+                        </Box>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </Paper>
           </Grid>
         </Grid>
       </Container>
