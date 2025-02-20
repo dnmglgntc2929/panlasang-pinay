@@ -42,6 +42,8 @@ export default function LandingPage() {
         margin: 0,
         padding: 0,
         overflowX: "hidden",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <Header />
@@ -49,9 +51,10 @@ export default function LandingPage() {
         disableGutters // Remove padding from the container
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", md: "row" }, // Stack on small screens
+          flexDirection: "column",
           alignItems: "center",
-          marginTop: { xs: 0, md: 0 }, // Adjust for screen sizes
+          justifyContent: "center",
+          flex: 1,
           paddingTop: "20px",
           width: "100%", // Ensure the container spans the full width
         }}
@@ -61,6 +64,7 @@ export default function LandingPage() {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             alignItems: "center",
+            justifyContent: "center",
             paddingRight: { xs: 0, md: 15 },
           }}
         >
@@ -116,7 +120,8 @@ export default function LandingPage() {
             sx={{
               flex: 1,
               display: "flex",
-              justifyContent: { xs: "center", md: "flex-end" },
+              justifyContent: "center", // Center the image container
+              alignItems: "center", // Center the image vertically
               marginLeft: { xs: 0, md: "20%" },
               marginTop: { xs: 2, md: 0 },
             }}
@@ -127,7 +132,6 @@ export default function LandingPage() {
               style={{
                 width: "100%", // Sets image to fill its container
                 height: "auto",
-                marginRight: "-150px",
                 maxWidth: { xs: "80%", md: "60%", lg: "50%" }, // Adjusts width for different screen sizes
               }}
             />

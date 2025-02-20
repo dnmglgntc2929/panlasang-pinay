@@ -27,8 +27,7 @@ import { Link } from "react-router-dom";
 import useLocalStorage from "use-local-storage";
 import Pinoyicon from "../../assets/logo2.png";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import CreateIcon from '@mui/icons-material/Create';
-
+import CreateIcon from "@mui/icons-material/Create";
 
 const drawerWidth = 240;
 
@@ -87,9 +86,9 @@ export default function ProductDrawer() {
 
   const productPages = [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "Talk", path: "/talk" },
+    { name: "Saved Recipes", path: "/talk" },
     { name: "Favorites", path: "/Favorites" },
-    { name: "Create Recipes", path: "/recipes"},
+    { name: "Community Recipes", path: "/recipes" },
     { name: "Settings", path: "/settings" },
   ];
 
@@ -97,6 +96,7 @@ export default function ProductDrawer() {
     try {
       await auth.logout();
       setLogOut(true);
+      localStorage.clear("likedDishes");
     } catch (error) {
       console.log(error);
     }

@@ -74,6 +74,7 @@ export default function LoginPage() {
 
       if (res.data.auth) {
         localStorage.setItem("jwt", res.data.token); // Save JWT in local storage
+        localStorage.setItem("userId", res.data.result.id);
         auth.login(res.data.result); // Log in with user sent from Express
         navigate("/dashboard", { replace: true });
       } else {

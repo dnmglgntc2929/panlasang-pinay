@@ -5,6 +5,68 @@ const jwtToken = localStorage.getItem("jwtToken");
 
 const port = 3001;
 
+// ✅ Fetch likes for a specific recipe (GET request)
+export const getLikes = async (recipeId) => {
+  try {
+    const jwtToken = localStorage.getItem("jwt");
+
+    if (!jwtToken) {
+      throw new Error("JWT token is missing");
+    }
+
+    const response = await Axios.get(
+      `http://localhost:${port}/api/likes/${recipeId}`, // ✅ Now uses GET
+      {
+        headers: {
+          "x-access-token": jwtToken,
+        },
+      }
+    );
+
+    return response.data.likes; // Returns array of likes
+  } catch (error) {
+    console.error(
+      "Error fetching likes:",
+      error.response ? error.response.data : error.message
+    );
+    return [];
+  }
+};
+
+// ✅ Function to Like/Unlike a Recipe (POST request)
+export const likeRecipe = async (recipeId, userId, postId, likeButton) => {
+  try {
+    const jwtToken = localStorage.getItem("jwt");
+
+    if (!jwtToken) {
+      throw new Error("JWT token is missing");
+    }
+
+    const response = await Axios.post(
+      `http://localhost:${port}/api/likes`, // ✅ Still using POST to toggle like
+      {
+        recipe_id: recipeId,
+        post_id: postId,
+        user_id: userId,
+        like_button: likeButton,
+      },
+      {
+        headers: {
+          "x-access-token": jwtToken,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error in likeRecipe:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Like action failed");
+  }
+};
+
 export const signup = async (firstName, lastName, email, password) => {
   try {
     const response = await Axios.post(`http://localhost:${port}/api/signup`, {
@@ -35,10 +97,17 @@ export const login = async (email, password) => {
 
 export const searchIngredients = async (searchQuery) => {
   try {
-    const response = await Axios.get(
-      `http://localhost:5000/api/search?query=${searchQuery}`
-    );
-    return response.data; // Return search results
+    const response = await Axios.post(`http://localhost:5001/api/recipes`, {
+      ingredients: searchQuery,
+    });
+
+    const data = await response.data;
+
+    if (Array.isArray(data.recipes)) {
+      console.log(data.recipes);
+      return data.recipes; // Return search results
+    }
+    return []; // Return search results
   } catch (error) {
     console.error("Error fetching search results", error);
     throw new Error("Search request failed");
@@ -69,4 +138,6 @@ export default {
   login,
   searchIngredients,
   gpt4,
+  getLikes,
+  likeRecipe,
 };

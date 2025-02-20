@@ -10,18 +10,25 @@ import {
   Typography,
   IconButton,
   TextField,
-} from "@mui/material";
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+} from "@mui/material"; // Added CircularProgress for loading indicator
 import Cards from "../../components/Cards";
 import axios from "axios";
 import withUserData from "../../components/UserData";
-import vegie from "../../assets/gulay.png";
-import chicken from "../../assets/Dishes/Chicken/adobong manok.jpg";
-import pork from "../../assets/Dishes/Pork/adobong baboy.jpg";
-import seafood from "../../assets/Dishes/Seafoods/Dinengdeng.jpg";
-import beef from "../../assets/Dishes/Beef/Beef Kaldereta.jpg";
-import dessert from "../../assets/Dishes/Dessert.kakanin/Bibingka.jpg";
+import vegie from "../../assets/Dishes/Vegetable/vegies.png";
+import chicken from "../../assets/Dishes/Chicken/chicken.png";
+import pork from "../../assets/Dishes/Pork/pork.png";
+import seafood from "../../assets/Dishes/Seafoods/seafoods.png";
+import beef from "../../assets/Dishes/Beef/cow.png";
+import dessert from "../../assets/Dishes/Dessert.kakanin/dessert.png";
 
 import * as AxiosService from "../../services/Axios";
+import Axios from "axios";
 import manokAdobo from "../../assets/adobong manok.jpg";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -93,6 +100,7 @@ const Dashboard = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [likedDishes, setLikedDishes] = useState({});
+  const [selectedDishImage, setSelectedDishImage] = useState(null); // New state for selected dish image
   const navigate = useNavigate();
 
   const handleFavoritesNavigation = () => {
@@ -170,7 +178,7 @@ const Dashboard = () => {
     selectedSearchResult,
   }) => {
     const dishName = selectedDish?.name || selectedSearchResult?.name;
-    const dishImage = dishImageMap[dishName];
+    const dishImage = selectedDishImage || dishImageMap[dishName]; // Use selectedDishImage if available
 
     return (
       <Modal open={openRecipeModal} onClose={handleCloseRecipeModal}>
@@ -183,14 +191,19 @@ const Dashboard = () => {
             width: "80%",
             maxWidth: "600px",
             maxHeight: "80vh",
-            bgcolor: "background.paper",
+            bgcolor: "#f0f0f0", // Updated background color to light gray
             boxShadow: 24,
             p: 4,
             borderRadius: "8px",
             overflowY: "auto",
           }}
         >
-          <Typography variant="h4" component="h2" gutterBottom>
+          <Typography
+            variant="h5" // Changed from h4 to h5
+            component="h2"
+            gutterBottom
+            sx={{ fontWeight: "bold" }}
+          >
             Recipe for {dishName}
           </Typography>
 
@@ -206,42 +219,58 @@ const Dashboard = () => {
             />
           )}
 
-          <Typography variant="body1" gutterBottom>
+          <Typography variant="body2" gutterBottom sx={{ fontWeight: "bold" }}>
             {selectedDish?.description || selectedSearchResult?.description}
           </Typography>
 
-          {/* Ingredients */}
-          <Typography variant="h4">Ingredients:</Typography>
-          {(
-            selectedDish?.recipe.ingredients ||
-            selectedSearchResult?.ingredients
-          )?.length > 0 ? (
-            <ul>
+          <Grid container spacing={2}>
+            {/* Ingredients */}
+            <Grid item xs={12} sm={6}>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Ingredients:
+              </Typography>
               {(
                 selectedDish?.recipe.ingredients ||
                 selectedSearchResult?.ingredients
-              ).map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
-              ))}
-            </ul>
-          ) : (
-            <Typography variant="body2">No ingredients available.</Typography>
-          )}
-
-          {/* Steps */}
-          <Typography variant="h4">Steps:</Typography>
-          {(selectedDish?.recipe.steps || selectedSearchResult?.steps)?.length >
-          0 ? (
-            <ol>
-              {(selectedDish?.recipe.steps || selectedSearchResult?.steps).map(
-                (step, index) => (
-                  <li key={index}>{step}</li>
-                )
+              )?.length > 0 ? (
+                <ul>
+                  {(
+                    selectedDish?.recipe.ingredients ||
+                    selectedSearchResult?.ingredients
+                  ).map((ingredient, index) => (
+                    <li key={index}>
+                      <Typography variant="body2">{ingredient}</Typography>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Typography variant="body2">
+                  No ingredients available.
+                </Typography>
               )}
-            </ol>
-          ) : (
-            <Typography variant="body2">No steps available.</Typography>
-          )}
+            </Grid>
+
+            {/* Steps */}
+            <Grid item xs={12} sm={6}>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Steps:
+              </Typography>
+              {(selectedDish?.recipe.steps || selectedSearchResult?.steps)
+                ?.length > 0 ? (
+                <ol>
+                  {(
+                    selectedDish?.recipe.steps || selectedSearchResult?.steps
+                  ).map((step, index) => (
+                    <li key={index}>
+                      <Typography variant="body2">{step}</Typography>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <Typography variant="body2">No steps available.</Typography>
+              )}
+            </Grid>
+          </Grid>
 
           <Button
             onClick={handleCloseRecipeModal}
@@ -1272,6 +1301,7 @@ const Dashboard = () => {
   // Handle opening the recipe modal
   const handleOpenRecipeModal = (dish) => {
     setSelectedDish(dish);
+    setSelectedDishImage(dish.recipe.images ? dish.recipe.images[0] : null); // Set the selected dish image
     setOpenRecipeModal(true);
   };
 
@@ -1279,6 +1309,7 @@ const Dashboard = () => {
   const handleCloseRecipeModal = () => {
     setOpenRecipeModal(false);
     setSelectedDish(null);
+    setSelectedDishImage(null); // Reset the selected dish image
   };
 
   // Search functionality
@@ -1322,7 +1353,7 @@ const Dashboard = () => {
       );
       if (results.length > 0) {
         setSearchResults(results);
-        setOpenSearchResultsModal(true);
+        // setOpenSearchResultsModal(true);
       } else {
         setErrorMessage("No recipes found matching your ingredients.");
       }
@@ -1339,26 +1370,62 @@ const Dashboard = () => {
     setOpenRecipeModal(true);
   };
 
+  const handleSaveRecipe = async (recipe) => {
+    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || [];
+    savedRecipes.push(recipe);
+    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
+
+    await Axios.post("http://localhost:5001/save_recipe", recipe);
+    alert("Recipe saved!");
+  };
+
   return (
-    <div>
-      <AppBar>
+    <div
+      style={{ backgroundColor: "#FAFAFA", minHeight: "100vh", color: "#333" }} // Updated background color
+    >
+      <AppBar position="static" sx={{ backgroundColor: "#FFC107" }}>
+        {" "}
+        // Updated AppBar color
         <Toolbar>
           <ProductDrawer />
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
+            Panlasang Pinay Dashboard
+          </Typography>
         </Toolbar>
       </AppBar>
       <Toolbar />
-      <Grid container spacing={3} style={{ padding: 24 }}>
+      <Grid container spacing={3} sx={{ padding: 3 }}>
         {/* Card 1 */}
         <Grid item xs={12} md={4}>
           <Cards
             title={`Welcome, ${user}!`}
-            content="Your Dashboard"
+            content={
+              <>
+                <Typography variant="body1" gutterBottom>
+                  Hi {user}, craving something delicious? 🤤 Let us help you
+                  decide what to cook or eat today!
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  🔍 Simply enter an ingredient or dish name, and we’ll serve up
+                  the best Filipino recipes for you. Whether you're in the mood
+                  for something hearty, sweet, or classic Pinoy comfort food,
+                  we’ve got you covered!
+                </Typography>
+                <Typography variant="body1">Let's get cooking! 🔥🍴</Typography>
+              </>
+            }
             customStyles={{
               height: "250px",
               width: "100%",
               display: "flex",
+              flexDirection: "column",
               justifyContent: "top",
               alignItems: "left",
+              backgroundColor: "#FFFFFF", // Updated card background color
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
+              color: "#333",
+              padding: "16px",
             }}
           />
         </Grid>
@@ -1372,6 +1439,10 @@ const Dashboard = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              backgroundColor: "#FFFFFF", // Updated card background color
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
+              color: "#333",
             }}
           >
             <Box
@@ -1399,18 +1470,26 @@ const Dashboard = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    "&:hover": {
+                      transform: "scale(1.1)",
+                      transition: "transform 0.2s",
+                    },
                   }}
                 >
                   <img
                     src={image}
                     alt={animal}
                     style={{
-                      width: "60px",
-                      height: "60px",
+                      width: "100px", // Increased width
+                      height: "100px", // Increased height
                       marginBottom: "8px",
+                      borderRadius: "50%",
+                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
                     }}
                   />
-                  <Typography variant="body2">{animal}</Typography>
+                  <Typography variant="body2" sx={{ color: "#333" }}>
+                    {animal}
+                  </Typography>
                 </IconButton>
               ))}
             </Box>
@@ -1421,11 +1500,18 @@ const Dashboard = () => {
         <Grid item xs={12} md={4}>
           <Cards
             title="What to Eat Today?"
-            customStyles={{ height: "400px", width: "100%" }}
+            customStyles={{
+              height: "400px",
+              width: "100%",
+              backgroundColor: "#FFFFFF", // Updated card background color
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
+              color: "#333",
+            }}
           >
             <Box
               sx={{
-                backgroundColor: "White",
+                backgroundColor: "#FFFDF6", // Updated box background color
                 height: "300px",
                 width: "100%",
                 marginTop: "10px",
@@ -1442,15 +1528,38 @@ const Dashboard = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
+                sx={{
+                  "& .MuiInputBase-root": {
+                    color: "#333",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#ccc",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#007bff",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#007bff",
+                  },
+                }}
               />
               <Button
-                sx={{ marginTop: "16px" }}
+                sx={{
+                  marginTop: "16px",
+                  backgroundColor: "#FFC107",
+                  color: "#000",
+                }} // Updated button color
                 fullWidth
                 variant="contained"
                 onClick={handleSearchSubmit}
               >
                 Search
               </Button>
+              {isLoading && (
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                  <CircularProgress />
+                </Box>
+              )}
             </Box>
           </Cards>
         </Grid>
@@ -1458,7 +1567,7 @@ const Dashboard = () => {
         {/* Card 4: Search Information */}
         <Grid item xs={12} md={8}>
           <Cards
-            title="Search"
+            title="Search Result"
             customStyles={{
               height: "400px",
               width: "100%",
@@ -1466,35 +1575,97 @@ const Dashboard = () => {
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
+              backgroundColor: "#FFFFFF", // Updated card background color
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
+              color: "#333",
             }}
           >
-            {searchResults.length > 0 ? (
-              <Box
-                sx={{
-                  backgroundColor: "#f5f5f5",
-                  padding: "16px",
-                  borderRadius: "8px",
-                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-                  width: "100%",
-                  textAlign: "center",
-                }}
-              >
-                {searchResults.map((result, index) => (
-                  <Typography
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: 800,
+                margin: "0 auto",
+                padding: 2,
+                maxHeight: "400px",
+                overflowY: "auto",
+                "&::-webkit-scrollbar": {
+                  width: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "#f1f1f1",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#c1c1c1",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb:hover": {
+                  backgroundColor: "#a1a1a1",
+                },
+              }}
+            >
+              {searchResults.length > 0 ? (
+                searchResults.map((result, index) => (
+                  <Card
                     key={index}
-                    variant="body1"
-                    sx={{ marginBottom: "8px" }}
+                    sx={{
+                      marginBottom: 2,
+                      boxShadow: 3,
+                      backgroundColor: "#f0f0f0",
+                    }}
                   >
-                    {result.name}: {result.description}
-                  </Typography>
-                ))}
-              </Box>
-            ) : (
-              <Typography variant="body2">
-                No results found. Try another search.
-              </Typography>
-            )}
-
+                    <CardContent>
+                      <Typography variant="h5" component="h3" gutterBottom>
+                        {result.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        paragraph
+                      >
+                        {result.description}
+                      </Typography>
+                      <Typography variant="h6" component="h4" mt={2}>
+                        Ingredients:
+                      </Typography>
+                      <List dense>
+                        {result.ingredients.map(
+                          (ingredient, ingredientIndex) => (
+                            <ListItem key={ingredientIndex} disableGutters>
+                              <ListItemText primary={ingredient} />
+                            </ListItem>
+                          )
+                        )}
+                      </List>
+                      <Typography variant="h6" component="h4" mt={2}>
+                        Instructions:
+                      </Typography>
+                      <List dense>
+                        {result.instructions.map(
+                          (instruction, instructionIndex) => (
+                            <ListItem key={instructionIndex} disableGutters>
+                              <ListItemText primary={instruction} />
+                            </ListItem>
+                          )
+                        )}
+                      </List>
+                      <Button
+                        sx={{ mt: 2 }}
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleSaveRecipe(result)}
+                      >
+                        Save Recipe
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Typography variant="body1">
+                  No recipes found matching your criteria.
+                </Typography>
+              )}
+            </Box>
             <Typography variant="body2">
               Enter a query and click "Search" to view results.
             </Typography>
@@ -1516,7 +1687,7 @@ const Dashboard = () => {
             width: "80%",
             maxWidth: "600px",
             maxHeight: "80vh",
-            bgcolor: "background.paper",
+            bgcolor: "#f0f0f0", // Updated background color to light gray
             boxShadow: 24,
             p: 4,
             borderRadius: "8px",
@@ -1554,7 +1725,6 @@ const Dashboard = () => {
                         marginBottom: "8px",
                       }}
                     >
-                      {/* Placeholder for dish image */}
                       <Typography variant="body2" sx={{ lineHeight: "150px" }}>
                         Image Here
                       </Typography>
@@ -1563,6 +1733,17 @@ const Dashboard = () => {
                       {dish.name}
                     </Typography>
                     <Typography variant="body2">{dish.description}</Typography>
+                    <Button
+                      sx={{ mt: 2 }}
+                      variant="contained"
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSaveRecipe(dish);
+                      }}
+                    >
+                      Save Recipe
+                    </Button>
                   </Box>
                 </Grid>
               ))}
@@ -1594,7 +1775,7 @@ const Dashboard = () => {
             width: "80%",
             maxWidth: "600px",
             maxHeight: "80vh",
-            bgcolor: "background.paper",
+            bgcolor: "#f0f0f0", // Updated background color to light gray
             boxShadow: 24,
             p: 4,
             borderRadius: "8px",
@@ -1624,11 +1805,15 @@ const Dashboard = () => {
                       textAlign: "center",
                       boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
                       cursor: "pointer",
-                      position: "relative", // For positioning the heart button
+                      position: "relative",
+                      "&:hover": {
+                        boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
+                        transition: "box-shadow 0.2s",
+                        transform: "scale(1.05)",
+                      },
                     }}
                     onClick={() => handleOpenRecipeModal(dish)}
                   >
-                    {/* Heart React Button */}
                     <IconButton
                       sx={{
                         position: "absolute",
@@ -1637,7 +1822,7 @@ const Dashboard = () => {
                         color: likedDishes[dish.name] ? "red" : "gray",
                       }}
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the modal
+                        e.stopPropagation();
                         toggleLike(dish);
                       }}
                     >
@@ -1663,12 +1848,12 @@ const Dashboard = () => {
                     >
                       {dish.recipe.images && dish.recipe.images.length > 0 ? (
                         <img
-                          src={dish.recipe.images[0]} // Display the first image
+                          src={dish.recipe.images[0]}
                           alt={dish.name}
                           style={{
                             width: "100%",
                             height: "100%",
-                            objectFit: "cover", // Maintain aspect ratio and cover space
+                            objectFit: "cover",
                             borderRadius: "8px",
                           }}
                         />

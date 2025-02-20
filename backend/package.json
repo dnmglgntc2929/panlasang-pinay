@@ -26,7 +26,7 @@
     "knex": "^3.1.0",
     "method-override": "^3.0.0",
     "node-rtsp-stream": "^0.0.9",
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.11.5",

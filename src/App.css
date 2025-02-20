@@ -1,30 +1,44 @@
-.App{
-    width: 100%;
-    min-height:100vh;
-
-    display: flex;
-    flex-direction: column;
-    background-color: var(--background-color);
-      
+.App {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5; /* Adjusted background color to dirty white */
+  transition: background-color 0.3s ease;
 }
 
 body {
-    background-color: var(--background-color);
-    color: var(--primary-text-color);
-  }
-  
-  
-  .card {
-    background-color: var(--card-background-color) !important;
-    padding: 20px !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-    color: var(--primary-text-color) !important;
-  }
+  background-color: #f5f5f5 !important; /* Adjusted background color */
+  color: #333; /* Darker text color for better contrast */
+  font-family: 'Roboto', sans-serif; /* Modern font */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  .input {
-    color: var(--primary-text-color) !important;
-    border-color: var(--input-border-color) !important;
-  }
-  
-  
+.card {
+  background-color: #fff !important; /* Light card background */
+  padding: 20px !important;
+  border-radius: 12px !important; /* More rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow */
+  color: #333 !important; /* Dark text color */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important; /* Enhanced shadow on hover */
+  transform: translateY(-8px); /* More pronounced lift on hover */
+}
+
+.input {
+  color: #333 !important; /* Darker text color */
+  border-color: #ccc !important; /* Light gray border */
+  padding: 12px; /* Increased padding */
+  border-radius: 6px; /* Slightly more rounded corners */
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: #007bff !important; /* Blue border on focus */
+  background-color: #e9f5ff !important; /* Light blue background on focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Subtle glow effect */
+}
+
